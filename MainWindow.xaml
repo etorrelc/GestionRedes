@@ -1,0 +1,252 @@
+<Window x:Class="GestionRedes.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Simulador de Gestión y Enrutamiento de Redes (I.O.)"
+        Height="860" Width="1280"
+        MinHeight="720" MinWidth="1050"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AppBackgroundBrush}"
+        FontFamily="Segoe UI">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="363*"/>
+            <ColumnDefinition Width="21*"/>
+            <ColumnDefinition Width="896*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <!-- 0: Banner Superior -->
+            <RowDefinition Height="Auto"/>
+            <!-- 1: Barra de Herramientas -->
+            <RowDefinition Height="Auto"/>
+            <!-- 2: Tarjetas de KPIs -->
+            <RowDefinition Height="Auto"/>
+            <!-- 3: Área de Trabajo Dividida -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 0: ENCABEZADO SUPERIOR -->
+        <Border Grid.Row="0" Background="{StaticResource HeaderBackgroundBrush}" Padding="20,12" Grid.ColumnSpan="3" Margin="0,0,0,37">
+            <StackPanel>
+                <TextBlock Text="SIMULADOR DE GESTIÓN Y BALANCEO DE TRÁFICO DE RED"
+                           Foreground="White" FontSize="16" FontWeight="Bold" FontFamily="Segoe UI"/>
+                <TextBlock Text="Optimización de Capacidad y Latencia de Enlaces con Algoritmos de Transporte (ENO • Costo Mínimo • Vogel • MODI)"
+                           Foreground="#94A3B8" FontSize="12" Margin="0,3,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- 1: BARRA DE HERRAMIENTAS -->
+        <Border Background="{StaticResource ToolbarBackgroundBrush}" Padding="16,8" Grid.ColumnSpan="3" Margin="0,64,0,2">
+            <WrapPanel VerticalAlignment="Center">
+                <TextBlock Text="Data Centers:" Foreground="White" VerticalAlignment="Center" Margin="0,0,6,0" FontWeight="SemiBold"/>
+                <ComboBox x:Name="cbNumOrg" Width="55" Margin="0,0,12,0" VerticalContentAlignment="Center" SelectedIndex="2">
+                    <ComboBoxItem Content="1"/>
+                    <ComboBoxItem Content="2"/>
+                    <ComboBoxItem Content="3"/>
+                    <ComboBoxItem Content="4"/>
+                    <ComboBoxItem Content="5"/>
+                    <ComboBoxItem Content="6"/>
+                    <ComboBoxItem Content="7"/>
+                    <ComboBoxItem Content="8"/>
+                </ComboBox>
+
+                <TextBlock Text="Destinos:" Foreground="White" VerticalAlignment="Center" Margin="0,0,6,0" FontWeight="SemiBold"/>
+                <ComboBox x:Name="cbNumDst" Width="55" Margin="0,0,12,0" VerticalContentAlignment="Center" SelectedIndex="3">
+                    <ComboBoxItem Content="1"/>
+                    <ComboBoxItem Content="2"/>
+                    <ComboBoxItem Content="3"/>
+                    <ComboBoxItem Content="4"/>
+                    <ComboBoxItem Content="5"/>
+                    <ComboBoxItem Content="6"/>
+                    <ComboBoxItem Content="7"/>
+                    <ComboBoxItem Content="8"/>
+                </ComboBox>
+
+                <Button x:Name="btnCrearTabla" Content="Crear Tabla"
+                        Style="{StaticResource ModernButtonStyle}"
+                        Background="#475569" Click="BtnCrearTabla_Click"/>
+
+                <Button x:Name="btnCargarEjemplo" Content="Cargar Ejemplo"
+                        Style="{StaticResource ModernButtonStyle}"
+                        Background="#64748B" Click="BtnCargarEjemplo_Click"/>
+
+                <Separator Width="20" Visibility="Hidden"/>
+
+                <TextBlock Text="Método:" Foreground="White" VerticalAlignment="Center" Margin="0,0,6,0" FontWeight="SemiBold"/>
+                <ComboBox x:Name="cbMetodo" Width="260" Margin="0,0,12,0" VerticalContentAlignment="Center" SelectedIndex="0">
+                    <ComboBoxItem Content="Vogel (VAM) + MODI (Recomendado)"/>
+                    <ComboBoxItem Content="Costo Mínimo + MODI"/>
+                    <ComboBoxItem Content="Esquina Noroeste (ENO) + MODI"/>
+                    <ComboBoxItem Content="Comparar Todos los Métodos"/>
+                </ComboBox>
+
+                <Button x:Name="btnResolver" Content="RESOLVER Y SIMULAR"
+                        Style="{StaticResource ModernButtonStyle}"
+                        Background="#10B981" FontWeight="Bold" Click="BtnResolver_Click"/>
+
+                <Button x:Name="btnProcedimiento" Content="Ver Procedimiento"
+                        Style="{StaticResource ModernButtonStyle}"
+                        Background="#2563EB" Click="BtnProcedimiento_Click"/>
+            </WrapPanel>
+        </Border>
+
+        <!-- 2: TARJETAS DE KPIS -->
+        <Border Grid.Row="1" Background="White" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,0,0,1" Padding="16,8" Grid.ColumnSpan="3" Margin="0,9,0,50">
+            <UniformGrid Columns="4">
+                <!-- KPI 1 -->
+                <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="4" Margin="4,0" Padding="12,8">
+                    <StackPanel>
+                        <TextBlock Text="COSTO INICIAL" FontSize="11" FontWeight="Bold" Foreground="#64748B"/>
+                        <TextBlock x:Name="lblKpiInicial" Text="-" FontSize="18" FontWeight="Bold" Foreground="#2563EB" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- KPI 2 -->
+                <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="4" Margin="4,0" Padding="12,8">
+                    <StackPanel>
+                        <TextBlock Text="COSTO ÓPTIMO (MODI)" FontSize="11" FontWeight="Bold" Foreground="#64748B"/>
+                        <TextBlock x:Name="lblKpiOptimo" Text="-" FontSize="18" FontWeight="Bold" Foreground="#10B981" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- KPI 3 -->
+                <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="4" Margin="4,0" Padding="12,8">
+                    <StackPanel>
+                        <TextBlock Text="AHORRO DE RED" FontSize="11" FontWeight="Bold" Foreground="#64748B"/>
+                        <TextBlock x:Name="lblKpiAhorro" Text="-" FontSize="18" FontWeight="Bold" Foreground="#8B5CF6" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- KPI 4 -->
+                <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="4" Margin="4,0" Padding="12,8">
+                    <StackPanel>
+                        <TextBlock Text="ESTADO BALANCEO" FontSize="11" FontWeight="Bold" Foreground="#64748B"/>
+                        <TextBlock x:Name="lblKpiBalanceo" Text="-" FontSize="18" FontWeight="Bold" Foreground="#0EA5E9" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+        </Border>
+
+        <!-- 3: ÁREA PRINCIPAL CON DIVISIÓN -->
+        <Grid Grid.Row="1" Margin="16,86,16,16" Grid.ColumnSpan="3" Grid.RowSpan="3">
+            <Grid.RowDefinitions>
+                <!-- Matriz de entrada -->
+                <RowDefinition Height="240" MinHeight="160"/>
+                <!-- Splitter -->
+                <RowDefinition Height="8"/>
+                <!-- Pestañas de resultados y simulación -->
+                <RowDefinition Height="*" MinHeight="220"/>
+            </Grid.RowDefinitions>
+
+            <!-- Matriz de Entrada -->
+            <GroupBox Grid.Row="0" Header=" Matriz de Entrada: Costos / Latencia por Enlace, Capacidad de Data Centers y Demanda (Mbps) "
+                      FontWeight="Bold" Foreground="#0F172A" Background="White" Padding="6">
+                <DataGrid x:Name="gridEntrada"
+                          AutoGenerateColumns="True"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserSortColumns="False"
+                          SelectionMode="Single"
+                          AutoGeneratingColumn="GridEntrada_AutoGeneratingColumn"/>
+            </GroupBox>
+
+            <!-- Separador arrastrable -->
+            <GridSplitter Grid.Row="1" Height="8" HorizontalAlignment="Stretch" Background="Transparent" Cursor="SizeNS"/>
+
+            <!-- Pestañas de Salida -->
+            <TabControl x:Name="tabsPrincipal" Grid.Row="2" Background="White">
+                <!-- Pestaña 1: Topología de Red -->
+                <TabItem Header="  🌐 Topología de Red (Simulación Vectorial)  ">
+                    <Grid Background="#F8FAFC">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Controles de topología -->
+                        <Border Grid.Row="0" Background="#F1F5F9" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="12,6">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox x:Name="chkSoloActivos" Content="Mostrar sólo enlaces con tráfico activo"
+                                          IsChecked="True" VerticalAlignment="Center" FontWeight="SemiBold"
+                                          Click="ChkSoloActivos_Click"/>
+                                <Button Content="Copiar Diagrama al Portapapeles" Margin="20,0,0,0"
+                                        Style="{StaticResource ModernButtonStyle}" Background="#64748B"
+                                        Click="BtnCopiarDiagrama_Click"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Canvas de simulación gráfica -->
+                        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                            <Canvas x:Name="canvasTopologia" MinHeight="450" MinWidth="850" Background="#F8FAFC"
+                                    SizeChanged="CanvasTopologia_SizeChanged"/>
+                        </ScrollViewer>
+                    </Grid>
+                </TabItem>
+
+                <!-- Pestaña 2: Cuadro Comparativo -->
+                <TabItem Header="  📊 Cuadro Comparativo de Métodos  ">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Comparación de Rendimiento de Algoritmos Iniciales (ENO, Costo Mínimo, Vogel) vs. Óptimo Global (MODI)"
+                                   FontWeight="SemiBold" Margin="4,4,4,8" Foreground="#334155"/>
+                        <DataGrid x:Name="gridComparativa" Grid.Row="1"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Método de Investigación de Operaciones" Binding="{Binding Metodo}" Width="2*"/>
+                                <DataGridTextColumn Header="Naturaleza de la Solución" Binding="{Binding Tipo}" Width="1.5*"/>
+                                <DataGridTextColumn Header="Costo / Latencia Total (Z)" Binding="{Binding CostoFormateado}" Width="1.2*"/>
+                                <DataGridTextColumn Header="Desviación vs Óptimo" Binding="{Binding DiferenciaFormateada}" Width="1.2*"/>
+                                <DataGridTextColumn Header="% Desviación" Binding="{Binding PorcentajeFormateado}" Width="1*"/>
+                                <DataGridTextColumn Header="Iteraciones MODI" Binding="{Binding IteracionesTexto}" Width="1*"/>
+                                <DataGridTextColumn Header="Calificación / Estado" Binding="{Binding EstadoTexto}" Width="1.2*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <!-- Pestaña 3: Solución Inicial -->
+                <TabItem Header="  📋 Solución Inicial  ">
+                    <Grid Margin="10">
+                        <DataGrid x:Name="gridInicial"
+                                  AutoGenerateColumns="True"
+                                  CanUserAddRows="False"
+                                  IsReadOnly="True"
+                                  AutoGeneratingColumn="GridResultados_AutoGeneratingColumn"/>
+                    </Grid>
+                </TabItem>
+
+                <!-- Pestaña 4: Solución Óptima -->
+                <TabItem Header="  🎯 Solución Óptima (MODI)  ">
+                    <Grid Margin="10">
+                        <DataGrid x:Name="gridOptima"
+                                  AutoGenerateColumns="True"
+                                  CanUserAddRows="False"
+                                  IsReadOnly="True"
+                                  AutoGeneratingColumn="GridResultados_AutoGeneratingColumn"/>
+                    </Grid>
+                </TabItem>
+
+                <!-- Pestaña 5: Plan de Enrutamiento & Procedimiento -->
+                <TabItem Header="  📝 Plan de Enrutamiento &amp; Log  ">
+                    <Grid Margin="10">
+                        <TextBox x:Name="txtReporte"
+                                 IsReadOnly="True"
+                                 TextWrapping="NoWrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Auto"
+                                 FontFamily="Consolas"
+                                 FontSize="13"
+                                 Background="#0F172A"
+                                 Foreground="#F8FAFC"
+                                 Padding="12"/>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Grid>
+</Window>
